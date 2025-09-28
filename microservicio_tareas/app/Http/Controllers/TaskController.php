@@ -16,6 +16,7 @@ class TaskController extends Controller
     public function store(Request $request)
     {   
         $task = new Task();
+        $task->userId = $request->userId;
         $task->title = $request->title;
         $task->description = $request->description;
         $task->start_date = $request->start_date;
@@ -37,6 +38,7 @@ class TaskController extends Controller
     public function update(Request $request, $id)
     {   
         $task = Task::find($id);
+        $task->userId = $request->userId;
         $task->title = $request->title;
         $task->description = $request->description;
         $task->start_date = $request->start_date;
