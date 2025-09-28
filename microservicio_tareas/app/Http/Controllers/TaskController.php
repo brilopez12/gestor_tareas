@@ -14,26 +14,42 @@ class TaskController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $task = Task::create($request->all());
+    {   
+        $task = new Task();
+        $task->title = $request->title;
+        $task->description = $request->description;
+        $task->start_date = $request->start_date;
+        $task->end_date = $request->end_date;
+        $task->status = $request->status;
+        $task->save();
         return response()->json($task, 201);
     }
 
     public function show($id)
     {
-        return Task::findOrFail($id);
+        //
     }
-
-    public function update(Request $request, $id)
+    /*public function edit(string $id)
     {
-        $task = Task::findOrFail($id);
-        $task->update($request->all());
+        //
+        $task = Task::find($id);
+    }*/
+    public function update(Request $request, $id)
+    {   
+        $task = Task::find($id);
+        $task->title = $request->title;
+        $task->description = $request->description;
+        $task->start_date = $request->start_date;
+        $task->end_date = $request->end_date;
+        $task->status = $request->status;
+        $task->save();
         return response()->json($task, 200);
     }
 
     public function destroy($id)
     {
-        Task::destroy($id);
+        $task = Task::find($id);
+        $task->delete();
         return response()->json(null, 204);
     }
 }
