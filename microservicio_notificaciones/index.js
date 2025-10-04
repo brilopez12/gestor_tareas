@@ -23,7 +23,7 @@ app.get("/notificar", async (req, res) => {
     for (const tarea of tareas) {
       const [usuarios] = await dbSeguridad.query(
         "SELECT email, name FROM users WHERE id = ?",
-        [tarea.usuario_id]
+        [tarea.userId]
       );
 
       if (usuarios.length === 0) continue;
@@ -33,11 +33,11 @@ app.get("/notificar", async (req, res) => {
         from: MAIL_CONFIG.auth.user,
         to: usuario.email,
         subject: "📌 Recordatorio de tarea próxima a vencer",
-        text: `Hola ${usuario.nombre},\n\nTu tarea "${tarea.titulo}" vence el ${tarea.fecha_vencimiento}.\n\n¡No olvides completarla!`
+        text: `Hola ${usuario.name},\n\nTu tarea "${tarea.title}" vence el ${tarea.end_date}.\n\n¡No olvides completarla!`
       };
 
       await transporter.sendMail(mailOptions);
-      console.log(`Correo enviado a ${usuario.email} sobre la tarea: ${tarea.titulo}`);
+      console.log(`Correo enviado a ${usuario.email} sobre la tarea: ${tarea.title}`);
     }
 
     res.json({ mensaje: "Notificaciones enviadas correctamente" });

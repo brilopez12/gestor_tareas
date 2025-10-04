@@ -16,11 +16,16 @@ export const dbSeguridad = mysql.createPool({
   database: "seguridad"
 });
 
-// Configuración de Nodemailer
+// Configuración de Nodemailer con Hotmail/Outlook
 export const MAIL_CONFIG = {
-  service: "gmail",
+  host: "smtp.office365.com", // servidor SMTP de Outlook/Hotmail
+  port: 587,                  // puerto TLS
+  secure: false,              // debe ser false porque usamos STARTTLS
   auth: {
-    user: "soportereportes676@gmail.com",
-    pass: "Soporte1234*"
+    user: "notificacionestarea360@hotmail.com", // tu correo
+    pass: "Notificaciones360*"          // tu contraseña real
+  },
+  tls: {
+    ciphers: "SSLv3"
   }
-};
+}
