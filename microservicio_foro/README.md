@@ -1,5 +1,6 @@
 # 📚 Microservicio de Foro de Ayuda (Django + MySQL)
 
+Este microservicio se encarga de poder publicar preguntas y respuestas como medio de ayuda para poder realizar las tareas
 ---
 
 ## ⚙️ Tecnologías usadas
