@@ -13,7 +13,7 @@ app.get("/notificar", async (req, res) => {
     const [tareas] = await dbTareas.query(
       `SELECT id, title, end_date, userId
        FROM tasks
-       WHERE end_date = CURDATE() + INTERVAL 2 DAY`
+       WHERE end_date = CURDATE() + INTERVAL 2 DAY AND STATUS = 'PENDIENTE'`
     );
 
     if (tareas.length === 0) {
@@ -30,7 +30,7 @@ app.get("/notificar", async (req, res) => {
       const usuario = usuarios[0];
 
       const mailOptions = {
-        from: MAIL_CONFIG.auth.user,
+        from: "soportereportes676@gmail.com",
         to: usuario.email,
         subject: "📌 Recordatorio de tarea próxima a vencer",
         text: `Hola ${usuario.name},\n\nTu tarea "${tarea.title}" vence el ${tarea.end_date}.\n\n¡No olvides completarla!`

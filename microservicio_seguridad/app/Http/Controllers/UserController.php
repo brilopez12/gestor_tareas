@@ -81,15 +81,5 @@ class UserController extends Controller
         $user->save();
         return response()->json(['message' => 'Usuario actualizado', 'user' => $user]);
     }
-
     
-    public function destroy($id)
-    {
-        $user = User::find($id);
-        if (!$user) {
-            return response()->json(['message' => 'Usuario no encontrado'], 404);
-        }
-        $user->delete();
-        return response()->json(['message' => 'Usuario eliminado']);
-    }
 }

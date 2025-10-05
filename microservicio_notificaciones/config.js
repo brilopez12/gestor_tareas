@@ -4,7 +4,7 @@ import mysql from "mysql2/promise";
 export const dbTareas = mysql.createPool({
   host: "localhost",
   user: "root",
-  password: "",   // agrega tu password si tienes
+  password: "",   
   database: "tareas"
 });
 
@@ -12,20 +12,20 @@ export const dbTareas = mysql.createPool({
 export const dbSeguridad = mysql.createPool({
   host: "localhost",
   user: "root",
-  password: "",   // agrega tu password si tienes
+  password: "",   
   database: "seguridad"
 });
 
 // Configuración de Nodemailer con Hotmail/Outlook
 export const MAIL_CONFIG = {
-  host: "smtp.office365.com", // servidor SMTP de Outlook/Hotmail
-  port: 587,                  // puerto TLS
-  secure: false,              // debe ser false porque usamos STARTTLS
+  host: "smtp-relay.brevo.com", 
+  port: 587,                 
+  secure: false,            
   auth: {
-    user: "notificacionestarea360@hotmail.com", // tu correo
-    pass: "Notificaciones360*"          // tu contraseña real
+    user: "988dd1001@smtp-brevo.com", 
+    pass: "bdOcfZzIUptV2J8E"         
   },
   tls: {
-    ciphers: "SSLv3"
+    rejectUnauthorized: false
   }
 }
