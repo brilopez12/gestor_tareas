@@ -1,10 +1,10 @@
 from locust import HttpUser, task
 class SimpleUser(HttpUser):
-    @task
+    @task(3)
     def index(self):
       self.client.get("/api/tasks")
 
-    @task
+    @task(2)
     def create_task(self):
       self.client.post("/api/tasks", json={
             "userId": "2",
@@ -15,8 +15,8 @@ class SimpleUser(HttpUser):
             "status": "Pendiente"
         })
 
-    @task(1)
-    def update_book(self):
+''' @task(1)
+    def update_task(self):
         self.client.put("/api/task/1", json={
             "userId": "2",
             "title": "Realizar el proyecto de software II",
@@ -27,5 +27,5 @@ class SimpleUser(HttpUser):
         })
 
     @task(1)
-    def delete_book(self):
-        self.client.delete("/api/task/2")
+    def delete_task(self):
+        self.client.delete("/api/task/2")'''

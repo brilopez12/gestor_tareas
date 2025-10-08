@@ -1,5 +1,5 @@
 # 📊 Microservicio de Reportes
-Este microservicio se encarga de hacer los reportes de acuerdo a al estado de la tarea tanto en pdf como en excel y guarda el historial de los reportes que se hagan.
+Este microservicio se encarga de hacer los reportes de acuerdo a al estado de la tarea tanto en pdf como en excel y guarda el historial de los reportes que se hagan en una base de datos NoSQL.
 
 ## 🛠️ Tecnologías
 
@@ -16,6 +16,7 @@ Este microservicio se encarga de hacer los reportes de acuerdo a al estado de la
 * OpenPyXL
 * FPDF
 * mysql-connector-python
+* MongoDB
 
 ---
 
