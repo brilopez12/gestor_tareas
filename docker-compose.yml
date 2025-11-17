@@ -1,0 +1,41 @@
+services:
+
+  seguridad-app:
+    build:
+        context: .
+        dockerfile: ./microservicio_seguridad/Dockerfile
+    container_name: seguridad-app
+    ports:
+      - "8000:80"     
+    volumes:
+      - ./microservicio_seguridad:/var/www/html/microservicio_seguridad
+    depends_on:
+      - seguridad-db
+    restart: unless-stopped
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: seguridad-db
+      DB_PORT: 3306
+      DB_DATABASE: seguridad_db
+      DB_USERNAME: user_seguridad
+      DB_PASSWORD: pass_seguridad
+      
+    command: bash -c "cd /var/www/html/microservicio_seguridad \
+        && composer install \
+        && apache2-foreground"
+
+  seguridad-db:
+    image: mysql:8.0
+    container_name: seguridad-db
+    ports:
+      - "3307:3306"  
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: seguridad_db
+      MYSQL_USER: user_seguridad
+      MYSQL_PASSWORD: pass_seguridad
+    volumes:
+      - mysql_seguridad_data:/var/lib/mysql
+
+volumes:
+  mysql_seguridad_data:
