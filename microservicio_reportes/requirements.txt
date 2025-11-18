@@ -1,0 +1,6 @@
+Flask
+pandas
+openpyxl
+fpdf
+mysql-connector-python
+pymongo

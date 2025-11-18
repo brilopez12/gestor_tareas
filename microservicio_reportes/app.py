@@ -11,14 +11,15 @@ app = Flask(__name__)
 
 # Conexión a MySQL (tareas)
 mysql_conn = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    database="tareas"
+    host="tareas-db",  
+    user="user_tareas", 
+    password="pass_tareas",
+    database="tareas_db"
 )
 
 # Conexión a MongoDB (historial)
-mongo_client = MongoClient("mongodb://localhost:27017/")
-mongo_db = mongo_client["reportes"]
+mongo_client = MongoClient("mongodb://reportes-mongo:27017/")
+mongo_db = mongo_client["reportes-mongo"]
 historial_collection = mongo_db["historial"]
 
 @app.route("/reporte/tareas", methods=["GET"])

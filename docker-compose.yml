@@ -21,7 +21,7 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: seguridad-db
+      MYSQL_DATABASE: seguridad_db
     ports:
       - "3307:3306"
     volumes:
@@ -56,7 +56,11 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: tareas-db
+      MYSQL_DATABASE: tareas_db
+      MYSQL_USER: user_tareas
+      MYSQL_PASSWORD: pass_tareas
+    command: >
+      --default-authentication-plugin=mysql_native_password
     ports:
       - "3308:3306"
     volumes:
@@ -113,6 +117,40 @@ services:
       timeout: 10s
       retries: 5
 
+    
+  reportes-app:
+      build:
+        context: .
+        dockerfile: ./microservicio_reportes/Dockerfile
+      container_name: reportes-app
+      depends_on:
+        tareas-db:
+          condition: service_healthy
+        reportes-mongo:
+          condition: service_started
+      environment:
+        MYSQL_HOST: tareas-db
+        MYSQL_USER: root
+        MYSQL_PASSWORD: root
+        MYSQL_DB: tareasdb
+        MONGO_HOST: reportes-mongo
+      ports:
+        - "5000:5000"
+      volumes:
+        - ./microservicio_reportes:/var/www/html/microservicio_reportes
+      networks:
+      - app_net
+
+  reportes-mongo:
+      image: mongo:6
+      container_name: reportes-mongo
+      ports:
+        - "27017:27017"
+      volumes:
+        - reportes-mongo-data:/data/db
+      networks:
+      - app_net
+
 
 networks:
   app_net:       
@@ -122,4 +160,5 @@ volumes:
   mysql_tareas_data:
   mysql_seguridad_data:
   foro_mysql_data:
+  reportes-mongo-data:
 
