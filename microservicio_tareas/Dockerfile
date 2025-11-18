@@ -7,10 +7,10 @@ RUN apt-get update && apt-get install -y \
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-WORKDIR /var/www/html/microservicio_seguridad
+WORKDIR /var/www/html/microservicio_tareas
 
 # Copiar TODO el proyecto ANTES de instalar dependencias
-COPY ./microservicio_seguridad ./
+COPY ./microservicio_tareas ./
 
 # Instalar dependencias
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
@@ -19,6 +19,6 @@ RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 RUN chown -R www-data:www-data storage bootstrap/cache \
  && chmod -R 755 storage bootstrap/cache
 
-EXPOSE 8000
+EXPOSE 8001
 
-CMD ["sh", "-c", "php artisan migrate --force || true && php artisan serve --host=0.0.0.0 --port=8000"]
+CMD ["sh", "-c", "php artisan migrate --force || true && php artisan serve --host=0.0.0.0 --port=8001"]

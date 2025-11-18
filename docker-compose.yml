@@ -1,41 +1,125 @@
 services:
-
   seguridad-app:
     build:
-        context: .
-        dockerfile: ./microservicio_seguridad/Dockerfile
+      context: .
+      dockerfile: ./microservicio_seguridad/Dockerfile
     container_name: seguridad-app
+    restart: always
     ports:
-      - "8000:80"     
+      - "8000:8000"    
     volumes:
       - ./microservicio_seguridad:/var/www/html/microservicio_seguridad
     depends_on:
-      - seguridad-db
-    restart: unless-stopped
-    environment:
-      DB_CONNECTION: mysql
-      DB_HOST: seguridad-db
-      DB_PORT: 3306
-      DB_DATABASE: seguridad_db
-      DB_USERNAME: user_seguridad
-      DB_PASSWORD: pass_seguridad
-      
-    command: bash -c "cd /var/www/html/microservicio_seguridad \
-        && composer install \
-        && apache2-foreground"
+      seguridad-db:
+        condition: service_healthy      
+    networks:
+      - app_net   
 
   seguridad-db:
-    image: mysql:8.0
+    image: mysql:8
     container_name: seguridad-db
-    ports:
-      - "3307:3306"  
+    restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: seguridad_db
-      MYSQL_USER: user_seguridad
-      MYSQL_PASSWORD: pass_seguridad
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: seguridad-db
+    ports:
+      - "3307:3306"
     volumes:
       - mysql_seguridad_data:/var/lib/mysql
+    networks:
+      - app_net  
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
+  tareas-app:
+    build:
+      context: .
+      dockerfile: ./microservicio_tareas/Dockerfile
+    container_name: tareas-app
+    restart: always
+    ports:
+      - "8001:8000"    
+    volumes:
+      - ./microservicio_tareas:/var/www/html/microservicio_tareas
+    depends_on:
+      tareas-db:
+        condition: service_healthy      
+    networks:
+      - app_net   
+
+  tareas-db:
+    image: mysql:8
+    container_name: tareas-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tareas-db
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql_tareas_data:/var/lib/mysql
+    networks:
+      - app_net  
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
+  foro-app:
+    build:
+      context: .
+      dockerfile: ./microservicio_foro/Dockerfile
+    container_name: foro-app
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./microservicio_foro:/var/www/html/microservicio_foro
+    environment:
+      DB_HOST: foro-db
+      DB_PORT: 3306
+      DB_NAME: foro_db
+      DB_USER: foro_user
+      DB_PASSWORD: foro_pass
+      # URL del microservicio de seguridad
+      SECURITY_SERVICE_URL: http://seguridad-app:8000/api
+    depends_on:
+      foro-db:
+        condition: service_healthy
+    networks:
+      - app_net
+
+  foro-db:
+    image: mysql:8.0
+    container_name: foro-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: foro_db
+      MYSQL_USER: foro_user
+      MYSQL_PASSWORD: foro_pass
+    ports:
+      - "3309:3306"
+    volumes:
+      - foro_mysql_data:/var/lib/mysql
+    networks:
+      - app_net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
+
+networks:
+  app_net:       
+    driver: bridge
 
 volumes:
+  mysql_tareas_data:
   mysql_seguridad_data:
+  foro_mysql_data:
+

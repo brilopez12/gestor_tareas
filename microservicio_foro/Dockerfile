@@ -2,7 +2,8 @@
 FROM python:3.11-slim
 
 # Evitar buffering en los logs (útil para Docker)
-ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
 # Instalar dependencias del sistema necesarias para compilar mysqlclient
 RUN apt-get update && apt-get install -y \
@@ -12,16 +13,14 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Crear el directorio de trabajo dentro del contenedor
-WORKDIR /app
-
+WORKDIR /var/www/html/microservicio_foro
 # Copiar el archivo requirements.txt primero para aprovechar la caché de Docker
-COPY requirements.txt .
-
-# Instalar dependencias de Python
-RUN pip install --no-cache-dir -r requirements.txt
+COPY microservicio_foro/requirements.txt .
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
 
 # Copiar el resto del código del proyecto
-COPY . .
+# COPY . .
 
 # Exponer el puerto que usará Django (9000 según tu documentación)
 EXPOSE 9000
