@@ -6,16 +6,28 @@ import pandas as pd
 from fpdf import FPDF
 from datetime import datetime
 import io
+import os
 
 app = Flask(__name__)
 
 # Conexión a MySQL (tareas)
-mysql_conn = mysql.connector.connect(
-    host="tareas-db",  
-    user="user_tareas", 
-    password="pass_tareas",
-    database="tareas_db"
-)
+'''mysql_conn = mysql.connector.connect(
+    host=os.environ.get("MYSQL_HOST"),
+    user=os.environ.get("MYSQL_USER"),
+    password=os.environ.get("MYSQL_PASSWORD"),
+    database=os.environ.get("MYSQL_DATABASE"),
+    port=int(os.environ.get("MYSQL_PORT", 3306))
+)'''
+
+def get_mysql_connection():
+    return mysql.connector.connect(
+        host=os.environ.get("MYSQL_HOST"),
+        user=os.environ.get("MYSQL_USER"),
+        password=os.environ.get("MYSQL_PASSWORD"),
+        database=os.environ.get("MYSQL_DATABASE"),
+        port=int(os.environ.get("MYSQL_PORT", 3306))
+    )
+
 
 # Conexión a MongoDB (historial)
 mongo_client = MongoClient("mongodb://reportes-mongo:27017/")
@@ -27,8 +39,10 @@ def reporte_tareas():
     estado = request.args.get("estado")
     formato = request.args.get("formato", "json")  # json, pdf, excel
 
-    cursor = mysql_conn.cursor(dictionary=True)
-    
+    #cursor = mysql_conn.cursor(dictionary=True)
+    conn = get_mysql_connection()
+    cursor = conn.cursor(dictionary=True)   
+
     if estado:
         cursor.execute("SELECT * FROM tasks WHERE status = %s", (estado,))
     else:
@@ -54,7 +68,7 @@ def reporte_tareas():
         df = pd.DataFrame(tareas)
         
         nombre = f"reporte_tareas_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
-        ruta_archivo = rf"C:\Users\lopez\Desktop\reportes\{nombre}"
+        ruta_archivo = f"/tmp/{nombre}"
         df.to_excel(ruta_archivo, index=False)
         
         return send_file(
@@ -77,7 +91,7 @@ def reporte_tareas():
             pdf.ln(2)
 
         nombre = f"reporte_tareas_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
-        ruta_archivo = f"C:\\Users\\lopez\\Desktop\\reportes\\{nombre}"
+        ruta_archivo = f"/tmp/{nombre}"
         pdf.output(ruta_archivo)
 
         return jsonify({"mensaje": "Reporte PDF generado", "ruta": ruta_archivo})
@@ -87,4 +101,4 @@ def reporte_tareas():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    app.run(host="0.0.0.0", port=5000, debug=True)

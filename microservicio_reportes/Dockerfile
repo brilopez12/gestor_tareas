@@ -15,11 +15,12 @@ COPY microservicio_reportes/requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-# Copiar el proyecto
+# Copiar el proyecto entero
 COPY microservicio_reportes/ .
 
 # Exponer puerto
 EXPOSE 5000
 
 # Comando por defecto
-CMD ["python", "app.py"]
+CMD ["sh", "-c", "python wait_for_mysql.py && python app.py"]
+

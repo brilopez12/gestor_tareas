@@ -6,14 +6,14 @@ services:
     container_name: seguridad-app
     restart: always
     ports:
-      - "8000:8000"    
+      - "8000:8000"
     volumes:
       - ./microservicio_seguridad:/var/www/html/microservicio_seguridad
     depends_on:
       seguridad-db:
-        condition: service_healthy      
+        condition: service_healthy
     networks:
-      - app_net   
+      - app_net
 
   seguridad-db:
     image: mysql:8
@@ -27,7 +27,7 @@ services:
     volumes:
       - mysql_seguridad_data:/var/lib/mysql
     networks:
-      - app_net  
+      - app_net
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 5s
@@ -41,14 +41,14 @@ services:
     container_name: tareas-app
     restart: always
     ports:
-      - "8001:8000"    
+      - "8001:8000"
     volumes:
       - ./microservicio_tareas:/var/www/html/microservicio_tareas
     depends_on:
       tareas-db:
-        condition: service_healthy      
+        condition: service_healthy
     networks:
-      - app_net   
+      - app_net
 
   tareas-db:
     image: mysql:8
@@ -59,14 +59,12 @@ services:
       MYSQL_DATABASE: tareas_db
       MYSQL_USER: user_tareas
       MYSQL_PASSWORD: pass_tareas
-    command: >
-      --default-authentication-plugin=mysql_native_password
     ports:
       - "3308:3306"
     volumes:
       - mysql_tareas_data:/var/lib/mysql
     networks:
-      - app_net  
+      - app_net
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 5s
@@ -88,7 +86,6 @@ services:
       DB_NAME: foro_db
       DB_USER: foro_user
       DB_PASSWORD: foro_pass
-      # URL del microservicio de seguridad
       SECURITY_SERVICE_URL: http://seguridad-app:8000/api
     depends_on:
       foro-db:
@@ -117,43 +114,42 @@ services:
       timeout: 10s
       retries: 5
 
-    
   reportes-app:
-      build:
-        context: .
-        dockerfile: ./microservicio_reportes/Dockerfile
-      container_name: reportes-app
-      depends_on:
-        tareas-db:
-          condition: service_healthy
-        reportes-mongo:
-          condition: service_started
-      environment:
-        MYSQL_HOST: tareas-db
-        MYSQL_USER: root
-        MYSQL_PASSWORD: root
-        MYSQL_DB: tareasdb
-        MONGO_HOST: reportes-mongo
-      ports:
-        - "5000:5000"
-      volumes:
-        - ./microservicio_reportes:/var/www/html/microservicio_reportes
-      networks:
+    build:
+      context: .
+      dockerfile: ./microservicio_reportes/Dockerfile
+    container_name: reportes-app
+    depends_on:
+      tareas-db:
+        condition: service_healthy
+      reportes-mongo:
+        condition: service_started
+    environment:
+      MYSQL_HOST: tareas-db
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: tareas_db
+      MYSQL_USER: user_tareas
+      MYSQL_PASSWORD: pass_tareas
+      MONGO_HOST: reportes-mongo
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./microservicio_reportes:/var/www/html/microservicio_reportes
+    networks:
       - app_net
 
   reportes-mongo:
-      image: mongo:6
-      container_name: reportes-mongo
-      ports:
-        - "27017:27017"
-      volumes:
-        - reportes-mongo-data:/data/db
-      networks:
+    image: mongo:6
+    container_name: reportes-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - reportes-mongo-data:/data/db
+    networks:
       - app_net
 
-
 networks:
-  app_net:       
+  app_net:
     driver: bridge
 
 volumes:
@@ -161,4 +157,3 @@ volumes:
   mysql_seguridad_data:
   foro_mysql_data:
   reportes-mongo-data:
-
