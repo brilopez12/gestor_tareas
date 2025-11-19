@@ -2,18 +2,20 @@ import mysql from "mysql2/promise";
 
 // Conexión a la DB de tareas
 export const dbTareas = mysql.createPool({
-  host: "localhost",
-  user: "root",
-  password: "",   
-  database: "tareas"
+  host: process.env.MYSQL_HOST_TAR,
+  port: process.env.MYSQL_PORT_TAR,
+  database: process.env.MYSQL_DATABASE_TAR,
+  user: process.env.MYSQL_USER_TAR,
+  password: process.env.MYSQL_PASSWORD_TAR
 });
 
 // Conexión a la DB de seguridad (tabla: users)
 export const dbSeguridad = mysql.createPool({
-  host: "localhost",
-  user: "root",
-  password: "",   
-  database: "seguridad"
+  host: process.env.MYSQL_HOST_SEG,
+  port: process.env.MYSQL_PORT_SEG,
+  database: process.env.MYSQL_DATABASE_SEG,
+  user: process.env.MYSQL_USER_SEG,
+  password: process.env.MYSQL_PASSWORD_SEG
 });
 
 // Configuración de Nodemailer con Hotmail/Outlook

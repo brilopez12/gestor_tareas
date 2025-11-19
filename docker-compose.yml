@@ -41,7 +41,7 @@ services:
     container_name: tareas-app
     restart: always
     ports:
-      - "8001:8000"
+      - "8001:8001"
     volumes:
       - ./microservicio_tareas:/var/www/html/microservicio_tareas
     depends_on:
@@ -158,11 +158,18 @@ services:
       seguridad-db:
         condition: service_healthy
     environment:
-      MYSQL_HOST: seguridad-db
-      MYSQL_PORT: 3306
-      MYSQL_DATABASE: seguridad_db
-      MYSQL_USER: root           
-      MYSQL_PASSWORD: root
+       # DB Tareas
+        MYSQL_HOST_TAR: tareas-db
+        MYSQL_PORT_TAR: 3306
+        MYSQL_DATABASE_TAR: tareas_db
+        MYSQL_USER_TAR: user_tareas
+        MYSQL_PASSWORD_TAR: pass_tareas
+        # DB Seguridad
+        MYSQL_HOST_SEG: seguridad-db
+        MYSQL_PORT_SEG: 3306
+        MYSQL_DATABASE_SEG: seguridad_db
+        MYSQL_USER_SEG: root
+        MYSQL_PASSWORD_SEG: root
     ports:
       - "3000:3000"
     volumes:
