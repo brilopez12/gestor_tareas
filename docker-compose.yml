@@ -147,6 +147,28 @@ services:
       - reportes-mongo-data:/data/db
     networks:
       - app_net
+  
+  notificaciones-app:
+    build:
+      context: .
+      dockerfile: ./microservicio_notificaciones/Dockerfile
+    container_name: notificaciones-app
+    restart: always
+    depends_on:
+      seguridad-db:
+        condition: service_healthy
+    environment:
+      MYSQL_HOST: seguridad-db
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: seguridad_db
+      MYSQL_USER: root           
+      MYSQL_PASSWORD: root
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./microservicio_notificaciones:/var/www/html/microservicio_notificaciones
+    networks:
+      - app_net
 
 networks:
   app_net:
